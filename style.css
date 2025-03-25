@@ -1,0 +1,278 @@
+body{
+    padding: 0;
+    margin: 0;
+    font-family:sans-serif;
+    background-color: #121212;
+    display: flex;
+    justify-content: center; 
+    align-items: center;    
+    height: 100vh;  
+    overflow-x: hidden;
+}
+
+.card-container{
+    display: flex;
+    position: relative;
+    flex-direction: row;
+    gap: 20px;
+}
+
+
+
+.card{
+    background-color: #28282860;
+    min-width: 600px;
+    min-height: 500px;
+    display: grid;
+    grid-template-areas: 
+    "title"
+    "tree";
+    grid-template-rows: auto 1fr;
+    border-radius: 35px;
+    padding: 20px;
+    max-width: 80%;
+}
+
+
+.title{
+    text-align: center;
+    color: #FFFFFF;
+}
+
+.tree-container {
+    grid-area: "tree";
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    max-width: 100%;
+    align-self: center;
+    justify-self: center;
+    padding: 20px;
+}
+
+.circle {
+    width: 50px;
+    height: 50px;
+    background-color: #FFFFFF;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    flex-shrink: 1;
+    position: relative;
+    z-index: 2; /* Higher z-index than lines */
+}
+
+.text-input {
+    background: none;
+    border-style: none;
+    text-align: center;
+    border: none;
+    font-size: 16px;
+    width: 50px;
+}
+
+.text-input:focus{
+    border: none;
+    border-style: none;
+}
+
+.descendant-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 10px;
+}
+
+.circle.add{
+    background-color: transparent;
+    border: 1px solid #d9d9d9;
+    border-style: dashed;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.circle.add svg {
+    width: 20px;
+    height: 20px;
+}
+
+.left-container, .right-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.btn-traverse{
+    background-color: #56be34;
+    border: none;
+    padding: 10px;
+    margin: 0;
+    cursor: pointer;
+    align-self: center;
+    border-radius: 10px;
+    transition: background-color 0.3s ease;
+    position: absolute;
+    right: 20px;
+    top: 20px;
+}
+
+.btn-traverse:hover{
+    background-color: #82cd65;
+}
+
+.btn-traverse img{
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-chat{
+    background-color: white;
+    border: none;
+    padding: 10px;
+    margin: 0;
+    cursor: pointer;
+    align-self: center;
+    border-radius: 10px;
+    transition: background-color 0.3s ease;
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+}
+
+.btn-chat:hover{
+    background-color: #56be34;
+}
+
+.btn-chat img{
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-close{
+    background-color: transparent;
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    border: none;
+    cursor: pointer;
+} 
+
+.btn-close img{
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+
+.chat-container {
+    position: absolute;
+    right: -340px; /* Hide it initially (300px width + 40px padding) */
+    bottom: 20px;
+    width: 300px;
+    padding: 20px;
+    background-color: #28282890;
+    border-radius: 10px;
+    backdrop-filter: blur(5px);
+    transition: right 0.3s ease; /* Add smooth transition */
+    z-index: 100;
+}
+
+/* Add this new class for active state */
+.chat-container.active {
+    right: 20px; /* Show it when active */
+}
+.chat-container p, h2{
+    color: white;
+}
+
+.chat-header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position:relative;
+}
+
+.chat-header::after{
+    content: "";
+    width: 100%;
+    height: 1px;
+    background-color: #d9d9d9;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+
+.chat-body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 100%;
+    overflow-y: auto;
+    max-height: 400px;
+    margin-top: 20px;
+    /* Webkit browsers */
+    &::-webkit-scrollbar {
+        width: 4px;               /* make it thinner for a cleaner look */
+    }
+    
+    &::-webkit-scrollbar-track {
+        background: transparent;   /* hide the track */
+    }
+    
+    &::-webkit-scrollbar-thumb {
+        background: #6dc64e;  /* semi-transparent white for dark theme */
+        border-radius: 2px;
+    }
+
+}
+
+
+.chat-message {
+    background-color: #282828;
+    border-radius: 10px;
+    padding: 5px 10px;
+    width: fit-content;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional shadow for depth */
+}
+
+
+.chat-message p{
+    font-size: 13px;
+    word-wrap: break-word;
+}
+
+
+.glow {
+    animation: glow-animation 1s infinite alternate;
+}
+
+@keyframes glow-animation {
+    0% {
+        background-color: #56be34;
+    }
+    100% {
+        background-color: #82cd65;
+    }
+}
+
+
+/* lines */
+.lines-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none; /* So clicks pass through to elements below */
+    z-index: 1; /* Ensure it's below all circles */
+}

@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Binary Tree Traversal</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+    <button class="btn-traverse active" onclick="runTraversals()">
+        <img src="images/play-button.png" alt="play">
+    </button>
+
+    <div class="card">
+        <h1 class="title">
+            Binary Tree Traversal
+        </h1>
+        <div class="tree-container">
+            <svg class="lines-container"></svg>
+            <div class="root-container">
+                <div class="circle root-circle" attr="root" val="root">
+                    <p class="text-input"></p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <button class="btn-chat">
+        <img src="images/application-black.png" alt="open chat">
+    </button>
+
+    <div class="chat-container">
+        <div class="chat-header">
+            <h2>Steps of Traversal</h2>
+        </div>
+        <button class="btn-close">
+            <img src="images/minimize-video.png" alt="close">
+        </button>
+        
+        <div class="chat-body">
+        </div>
+    </div>
+
+</body>
+
+
+<script>
+
+class TreeNode {
+    constructor(value, circleElement = null) {
+        this.value = value;
+        this.left = null;
+        this.right = null;
+        this.circleElement = circleElement; // Store the reference to the circle
+    }
+}
+
+let focusedNode = null
+
+$('.circle').each(function(){
+    $(this).click(function(e) {
+        focusedNode = $(this)
+        console.log(focusedNode)
+        console.log(focusedNode.attr("val"))
+        if(focusedNode.attr("val") === "root" && $(".tree-container").children().length === 2){
+            let descendantContainer = createDescendantContainer()
+            $('.tree-container').append(descendantContainer)
+            return
+        }
+        inputHandler(focusedNode)
+    })
+})
+
+
+function createDescendantContainer(){
+    return $("<div></div>")
+        .addClass("descendant-container")
+        .html(`
+            <div class="left-container">
+                <div class="circle add btn-add-circle" position="left" onclick="addButtonHandler(this)">
+                    <svg fill="#d9d9d9" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 45.402 45.402" xml:space="preserve"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <path d="M41.267,18.557H26.832V4.134C26.832,1.851,24.99,0,22.707,0c-2.283,0-4.124,1.851-4.124,4.135v14.432H4.141 c-2.283,0-4.139,1.851-4.138,4.135c-0.001,1.141,0.46,2.187,1.207,2.934c0.748,0.749,1.78,1.222,2.92,1.222h14.453V41.27 c0,1.142,0.453,2.176,1.201,2.922c0.748,0.748,1.777,1.211,2.919,1.211c2.282,0,4.129-1.851,4.129-4.133V26.857h14.435 c2.283,0,4.134-1.867,4.133-4.15C45.399,20.425,43.548,18.557,41.267,18.557z"></path> </g> </g></svg>
+                </div>
+            </div>
+                    
+            <div class="right-container">
+                <div class="circle add btn-add-circle" position="right" onclick="addButtonHandler(this)">
+                    <svg fill="#d9d9d9" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 45.402 45.402" xml:space="preserve"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <path d="M41.267,18.557H26.832V4.134C26.832,1.851,24.99,0,22.707,0c-2.283,0-4.124,1.851-4.124,4.135v14.432H4.141 c-2.283,0-4.139,1.851-4.138,4.135c-0.001,1.141,0.46,2.187,1.207,2.934c0.748,0.749,1.78,1.222,2.92,1.222h14.453V41.27 c0,1.142,0.453,2.176,1.201,2.922c0.748,0.748,1.777,1.211,2.919,1.211c2.282,0,4.129-1.851,4.129-4.133V26.857h14.435 c2.283,0,4.134-1.867,4.133-4.15C45.399,20.425,43.548,18.557,41.267,18.557z"></path> </g> </g></svg>
+                </div>
+            </div>
+        </div>`)
+}
+
+function buildTreeFromDOM() {
+    // Get the root value from the root circle
+    const rootCircle = $(".root-circle");
+    const rootValue = rootCircle.attr("val");
+    
+    // Check if rootValue is correctly retrieved
+    console.log("Root Value:", rootValue);
+    
+    // Initialize the root node
+    const rootNode = new TreeNode(rootValue);
+
+    // Iterate through all circles with an attr attribute
+    $(".circle[attr]").each(function() {
+        const circle = $(this)
+        const path = $(this).attr("attr");
+        const value = $(this).attr("val");
+
+        // Log the path and value for debugging
+        console.log("Node path:", path, "Node value:", value);
+
+        // Skip the root node
+        if (path !== "root") {
+            addNodeAtPath(rootNode, path, value, circle);
+        }
+        // If the node is the root node, add the root value to the root node
+        else{
+            addNodeAtPath(rootNode, path, rootValue, rootCircle);
+        }
+    });
+
+    return rootNode;
+}
+
+function addNodeAtPath(rootNode, path, value, circle) {
+    const parts = path.split('.');
+    let currentNode = rootNode;
+
+    for (let i = 1; i < parts.length; i++) {
+        const direction = parts[i];
+
+        if (direction === "left") {
+            if (!currentNode.left) {
+                currentNode.left = new TreeNode(null); // Don't set circle here
+            }
+            currentNode = currentNode.left;
+        } else if (direction === "right") {
+            if (!currentNode.right) {
+                currentNode.right = new TreeNode(null); // Don't set circle here
+            }
+            currentNode = currentNode.right;
+        }
+    }
+    // Set value and circle reference only at the final node
+    currentNode.value = value;
+    currentNode.circleElement = circle;
+}
+
+
+function preorderTraversal(node) {
+    if (!node) return [];
+    return [node].concat(preorderTraversal(node.left), preorderTraversal(node.right));
+}
+
+function inorderTraversal(node) {
+    if (!node) return [];
+    return inorderTraversal(node.left).concat([node], inorderTraversal(node.right));
+}
+
+function postorderTraversal(node) {
+    if (!node) return [];
+    return postorderTraversal(node.left).concat(postorderTraversal(node.right), [node]);
+}
+
+function runTraversals() {
+    $('.chat-body').empty();
+    
+    const rootNode = buildTreeFromDOM();
+    const order = prompt("Enter the order of traversal: (preorder, inorder, postorder)");
+    let traversalOrder;
+
+    addTraversalMessage(`Starting ${order} traversal...`);
+
+    if (order === "preorder") {
+        traversalOrder = preorderTraversal(rootNode);
+    } else if (order === "inorder") {
+        traversalOrder = inorderTraversal(rootNode);
+    } else if (order === "postorder") {
+        traversalOrder = postorderTraversal(rootNode);
+    }else{
+        alert('Invalid order')
+        return
+    }
+
+    $('.btn-chat').click()
+
+    traversalOrder.forEach((node, index) => {
+        setTimeout(() => {
+            highlightNode(node);
+            const description = getTraversalDescription(node, order, index, traversalOrder);
+            addTraversalMessage(description);
+        }, index * 2000);
+    });
+
+    setTimeout(() => {
+        addTraversalMessage(`${order} traversal completed!`);
+    }, traversalOrder.length * 2000);
+}
+    
+function inputHandler(circle) {
+    let val
+    
+    val = prompt("Enter the value of the new node: (Put blank to delete)")
+    $(circle).children().closest(".circle").find(".text-input").text(val)
+    
+    // Handle delete case (empty value)
+    if (val === "") {
+        let isRemove = confirm("Are you sure you want to remove this node?")
+        if(isRemove){
+            // Find which container the circle is in
+            let container = $(circle).closest(".left-container, .right-container")
+            let position = container.hasClass("left-container") ? "left" : "right"
+            
+            // Create an add button to replace the deleted node
+            let addButton = `
+                <div class="circle add btn-add-circle" position="${position}" onclick="addButtonHandler(this)">
+                    <svg fill="#d9d9d9" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 45.402 45.402" xml:space="preserve"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <path d="M41.267,18.557H26.832V4.134C26.832,1.851,24.99,0,22.707,0c-2.283,0-4.124,1.851-4.124,4.135v14.432H4.141 c-2.283,0-4.139,1.851-4.138,4.135c-0.001,1.141,0.46,2.187,1.207,2.934c0.748,0.749,1.78,1.222,2.92,1.222h14.453V41.27 c0,1.142,0.453,2.176,1.201,2.922c0.748,0.748,1.777,1.211,2.919,1.211c2.282,0,4.129-1.851,4.129-4.133V26.857h14.435 c2.283,0,4.134-1.867,4.133-4.15C45.399,20.425,43.548,18.557,41.267,18.557z"></path> </g> </g></svg>
+                </div>
+            `
+            
+            // Empty the container and add the add button
+            container.empty()
+            container.html(addButton)
+            drawLines(); // Add this
+        }
+    } else {
+        // If not deleting, just update the value
+        $(circle).attr("val", val)
+        drawLines();
+    }
+}
+
+
+function addButtonHandler(circle){
+    let descendantContainer = createDescendantContainer()
+    let position = circle.getAttribute("position")
+    let circleDiv = circle.closest(".circle")
+        circleDiv.classList.remove("btn-add-circle")
+        circleDiv.classList.remove("add") 
+        circleDiv.innerHTML = `<p class="text-input">1</p>`
+
+    let parentCircle;
+    if ($(circle).closest(".left-container, .right-container").length > 0) {
+        // First try to find parent by going up the DOM
+        parentCircle = $(circle).closest(".left-container, .right-container").parent().closest(".descendant-container").parent().find(".circle").first();
+        
+    } else {
+        // If we're at the root level
+        parentCircle = $(".root-container").find(".circle").first();
+    }
+
+    // Build the tree path
+    let parentAttr = parentCircle.attr("attr") || "root";
+    let newAttr = position === "left" ? `${parentAttr}.left` : `${parentAttr}.right`;
+
+    // Store the path in the attr attribute
+    $(circleDiv).attr("attr", newAttr);
+    console.log("Node path:", newAttr);
+
+    if(position === "left"){
+        let leftContainer = $(circle).closest(".left-container")
+        if(leftContainer.children().length === 1){
+            leftContainer.append(descendantContainer)
+        }
+        focusedNode = circle
+        inputHandler(focusedNode)
+        drawLines(); // Add this
+    }
+    if(position === "right"){
+        let rightContainer = $(circle).closest(".right-container")
+        if(rightContainer.children().length === 1){
+            rightContainer.append(descendantContainer)
+        }
+        focusedNode = circle
+        inputHandler(focusedNode)
+        drawLines(); // Add this
+    }
+}
+
+function highlightNode(node) {
+    // Use the stored circle reference
+    const circle = node.circleElement;
+    console.log("Circle:", circle);
+    
+    if (circle && circle.length) { // Check if the circle exists
+        circle.addClass("glow");
+
+        // Remove the glow after a short delay
+        setTimeout(() => {
+            circle.removeClass("glow");
+        }, 2000); // Adjust the duration as needed
+    } else {
+        console.log("Circle not found for node:", node.value);
+    }
+}
+
+
+// chat
+$('.btn-chat').click(function() {
+    $('.chat-container').addClass('active');
+    $(this).hide(); // Hide the chat button when chat is opened
+});
+
+// Update the close button click handler
+$('.btn-close').click(function() {
+    $('.chat-container').removeClass('active');
+    $('.btn-chat').show(); // Show the chat button when chat is closed
+});
+
+function getTraversalDescription(node, order, step, traversalOrder) {
+    const nodeValue = node.value || 'root';
+    const parentNode = findParentNode(node, traversalOrder);
+    const hasLeftChild = node.left !== null;
+    const hasRightChild = node.right !== null;
+
+    switch(order) {
+        case 'preorder':
+            if (step === 0) {
+                return `Step ${step + 1}: Visit root node (${nodeValue})`;
+            }
+            if (parentNode) {
+                const isLeftChild = parentNode.left === node;
+                return `Step ${step + 1}: Visit ${isLeftChild ? 'left' : 'right'} child (${nodeValue}) of node (${parentNode.value})`;
+            }
+            break;
+
+        case 'inorder':
+            if (!hasLeftChild && !hasRightChild) {
+                return `Step ${step + 1}: Visit leaf node (${nodeValue})`;
+            }
+            if (!hasLeftChild) {
+                return `Step ${step + 1}: No left child, visiting node (${nodeValue})`;
+            }
+            if (!hasRightChild) {
+                return `Step ${step + 1}: No right child, visiting node (${nodeValue})`;
+            }
+            return `Step ${step + 1}: Visited left subtree, now at node (${nodeValue})`;
+
+        case 'postorder':
+            if (!hasLeftChild && !hasRightChild) {
+                return `Step ${step + 1}: Visit leaf node (${nodeValue})`;
+            }
+            if (parentNode) {
+                const isLeftChild = parentNode.left === node;
+                return `Step ${step + 1}: Visited all children, now at ${isLeftChild ? 'left' : 'right'} child (${nodeValue}) of node (${parentNode.value})`;
+            }
+            return `Step ${step + 1}: Visited all children, returning to root (${nodeValue})`;
+    }
+}
+
+// Helper function to find parent node
+function findParentNode(node, traversalOrder) {
+    for (let i = 0; i < traversalOrder.length; i++) {
+        const potentialParent = traversalOrder[i];
+        if (potentialParent.left === node || potentialParent.right === node) {
+            return potentialParent;
+        }
+    }
+    return null;
+}
+
+function addTraversalMessage(description) {
+    const messageHTML = `
+        <div class="chat-message">
+            <p>${description}</p>
+        </div>
+    `;
+    $('.chat-body').append(messageHTML);
+    
+    // Scroll to the bottom of chat
+    const chatBody = $('.chat-body');
+    chatBody.scrollTop(chatBody[0].scrollHeight);
+}
+
+//lines
+function drawLines() {
+    $('.lines-container').empty();
+    
+    // Set SVG viewport size to match tree container
+    const svgContainer = $('.lines-container');
+    const treeContainerRect = $('.tree-container')[0].getBoundingClientRect();
+    svgContainer.attr('viewBox', `0 0 ${treeContainerRect.width} ${treeContainerRect.height}`);
+
+    // Only select circles that are actual nodes (not add buttons)
+    $('.circle:not(.add)').each(function() {
+        const parent = $(this);
+        const parentRect = this.getBoundingClientRect();
+        
+        // Calculate positions relative to the tree container
+        const parentX = parentRect.left - treeContainerRect.left + (parentRect.width / 2);
+        const parentY = parentRect.top - treeContainerRect.top + (parentRect.height / 2);
+
+        const attr = parent.attr('attr') || 'root';
+        const leftChild = $(`.circle[attr="${attr}.left"]:not(.add)`);
+        const rightChild = $(`.circle[attr="${attr}.right"]:not(.add)`);
+
+        [leftChild, rightChild].forEach(child => {
+            if (child.length) {
+                const childRect = child[0].getBoundingClientRect();
+                const childX = childRect.left - treeContainerRect.left + (childRect.width / 2);
+                const childY = childRect.top - treeContainerRect.top + (childRect.height / 2);
+
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', parentX);
+                line.setAttribute('y1', parentY);
+                line.setAttribute('x2', childX);
+                line.setAttribute('y2', childY);
+                line.setAttribute('stroke', '#56be34');
+                line.setAttribute('stroke-width', '2');
+
+                svgContainer.append(line);
+            }
+        });
+    });
+}
+</script>
+
+</html>
